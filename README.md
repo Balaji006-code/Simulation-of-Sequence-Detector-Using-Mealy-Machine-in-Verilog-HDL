@@ -89,5 +89,3 @@ Paste the output here
 The Mealy Machine Sequence Detector for the bit pattern "11011" was successfully designed and simulated using Verilog HDL.
 Simulation results confirm that the circuit correctly detects the pattern and supports overlapping sequences.
 
-## **State Diagram**
-
