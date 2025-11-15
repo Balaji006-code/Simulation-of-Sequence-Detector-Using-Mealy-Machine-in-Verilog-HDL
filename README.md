@@ -28,64 +28,105 @@ For example, a **sequence detector** that detects `"1011"`:
 <img width="363" height="550" alt="image" src="https://github.com/user-attachments/assets/7861102e-c301-422a-bfa8-d8d887a8652b" />
 
 ## Verilog Code
-```
-// Mealy Sequence Detector for sequence "11011"
-module mealy_seq_detector_11011 (
-    input clk,
-    input reset,
-    input x,
-    output reg z
-);
+```verilog
+`timescale 1ns / 1ps
+module meelay_code(clk,rst,in,out);
+input clk;
+input rst;
+input in;
+output reg out;
+parameter S0 = 3'b000,
+          S1 = 3'b001,
+          S2 = 3'b010,
+          S3 = 3'b011,
+          S4 = 3'b100;
+reg [2:0] current_state,next_state;
+always @(posedge clk or posedge rst) 
+begin
+if (rst)
+    current_state <= S0;
+else
+    current_state <= next_state;
+end
 
-    // State encoding
-    parameter S0 = 3'b000,
-              S1 = 3'b001,
-              S2 = 3'b010,
-              S3 = 3'b011,
-              S4 = 3'b100,
-              S5 = 3'b101;
+always @(*) 
+begin
+out = 0;          
+case (current_state)
+S0: 
+begin
+if (in) 
+    next_state = S1;
+else    
+    next_state = S0;
+end
+S1: begin
+if (in) 
+    next_state = S2; 
+else    
+    next_state = S0;
+end
 
-    reg [2:0] state, next_state;
+S2: begin
+if (in) 
+    next_state = S2; 
+else    
+    next_state = S3;
+end
 
+S3: 
+begin
+if (in) 
+    next_state = S4; 
+else    
+    next_state = S0;
+end
+S4: 
+begin
+if (in) 
+begin
+    out = 1;           
+    next_state = S0;   
+end
+else
+    next_state = S3;    
+end
 
-
-
-    end
+default:next_state = S0;
+endcase
+end
 endmodule
 ```
 ## Testbench
-```
-module tb_mealy_seq_detector_11011;
-    reg clk, reset, x;
-    wire z;
+```verilog
+ module meelay_code_tb;
+reg clk, rst, in;
+wire out;
+meelay_code uut (clk,rst,in,out);
+initial  clk = 0;
+always #5 clk = ~clk;   
+initial 
+begin
+rst = 1; in = 0;
+#10 rst = 0;
 
-    mealy_seq_detector_11011 uut (
-        .clk(clk),
-        .reset(reset),
-        .x(x),
-        .z(z)
-    );
-
-    // Clock generation
-    initial begin
-        clk = 0;
-        forever #5 clk = ~clk;
-    end
-
-    // Stimulus
-    initial begin
-        reset = 1; x = 0;
-
+in=1;#10;
+in=1;#10;
+in=0;#10;
+in=1;#10;
+#20 $finish;
+end
 endmodule
 ```
 ## Simulation Output 
 ---
 
-Paste the output here
+<img width="1918" height="1079" alt="image" src="https://github.com/user-attachments/assets/c27f3b07-a059-42fd-a400-9d0140928f1c" />
+
 
 ---
 ## Result
 
-The Mealy Machine Sequence Detector for the bit pattern "11011" was successfully designed and simulated using Verilog HDL.
+The Mealy Machine Sequence Detector for the bit pattern "1101" was successfully designed and simulated using Verilog HDL.
 Simulation results confirm that the circuit correctly detects the pattern and supports overlapping sequences.
 
